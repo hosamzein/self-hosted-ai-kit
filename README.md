@@ -35,8 +35,11 @@ from PowerShell or CMD run the following
 ### For Nvidia GPU users
 
 git clone https://github.com/hosamzein/self-hosted-ai-kit.git
+
 cd self-hosted-ai-kit
+
 cp .env.example .env
+
 docker compose --profile gpu-nvidia up
 
 > [!NOTE]
