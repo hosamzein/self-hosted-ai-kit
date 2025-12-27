@@ -2,7 +2,7 @@
 
 **Self-hosted AI Starter Kit** is an open-source Docker Compose template designed to swiftly initialize a comprehensive local AI and low-code development environment.
 
-![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
+![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/joc-self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
 
 
@@ -35,8 +35,8 @@ instal [**Git**]([https://www.postgresql.org/](https://git-scm.com/install/))
 #### For Nvidia GPU users
 
 ```bash
-git clone https://github.com/hosamzein/self-hosted-ai-starter-kit.git
-cd self-hosted-ai-starter-kit
+git clone https://github.com/hosamzein/joc-self-hosted-ai-starter-kit.git
+cd joc-self-hosted-ai-starter-kit
 cp .env.example .env # you should update secrets and passwords inside
 docker compose --profile gpu-nvidia up
 ```
@@ -48,8 +48,8 @@ docker compose --profile gpu-nvidia up
 ### For AMD GPU users on Linux
 
 ```bash
-git clone https://github.com/hosamzein/self-hosted-ai-starter-kit.git
-cd self-hosted-ai-starter-kit
+git clone https://github.com/hosamzein/joc-self-hosted-ai-starter-kit.git
+cd joc-self-hosted-ai-starter-kit
 cp .env.example .env # you should update secrets and passwords inside
 docker compose --profile gpu-amd up
 ```
@@ -69,8 +69,8 @@ If you want to run Ollama on your mac, check the
 for installation instructions, and run the starter kit as follows:
 
 ```bash
-git clone https://github.com/hossamzein/self-hosted-ai-starter-kit.git
-cd self-hosted-ai-starter-kit
+git clone https://github.com/hossamzein/joc-self-hosted-ai-starter-kit.git
+cd joc-self-hosted-ai-starter-kit
 cp .env.example .env # you should update secrets and passwords inside
 docker compose up
 ```
@@ -89,8 +89,8 @@ If you're running OLLAMA locally on your Mac (not in Docker), you need to modify
 #### For everyone else
 
 ```bash
-git clone https://github.com/n8n-io/self-hosted-ai-starter-kit.git
-cd self-hosted-ai-starter-kit
+git clone https://github.com/n8n-io/joc-self-hosted-ai-starter-kit.git
+cd joc-self-hosted-ai-starter-kit
 cp .env.example .env # you should update secrets and passwords inside
 docker compose --profile cpu up
 ```
