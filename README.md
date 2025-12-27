@@ -2,7 +2,7 @@
 
 **Self-hosted AI Starter Kit** is an open-source Docker Compose template designed to swiftly initialize a comprehensive local AI and low-code development environment.
 
-![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
+![n8n.io - Screenshot](https://raw.githubusercontent.com/hossamzein/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
 
 
@@ -31,7 +31,7 @@ Engineering world, handles large amounts of data safely.
 ⭐️ **Private Financial Document Analysis** at minimal cost
 
 ## Installation
-
+instal [**Git**]([https://www.postgresql.org/](https://git-scm.com/install/)) 
 #### For Nvidia GPU users
 
 ```bash
