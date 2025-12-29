@@ -28,7 +28,23 @@
 
 ⭐️ **Interactive AI Chat** with local LLMs through Open WebUI
 
-## Installation (ubuntu server) 
+## onclick Installation (ubuntu server) copy all and run at cli
+
+# 1. Clean up old/broken keys and lists
+sudo rm -f /etc/apt/keyrings/docker.asc
+sudo rm -f /etc/apt/sources.list.d/docker.list
+sudo rm -f /etc/apt/sources.list.d/docker.sources
+
+# 2. Create keyring directory
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# 3. Download the Docker GPG key
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# 4. Install Everything and Print Success Message
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin git && sudo docker volume create portainer_data && sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts && git clone https://github.com/hosamzein/self-hosted-ai-kit.git && cd self-hosted-ai-kit && cp .env.example .env && sudo docker compose --profile gpu-nvidia up -d && export SERVER_IP=$(hostname -I | awk '{print $1}') && echo -e "\n\n✅ \033[0;32mInstallation Complete Successfully!\033[0m\n🚀 Access Portainer here through host browser: \033[0;34mhttps://$SERVER_IP:9443\033[0m\n"
+
 
 
 
