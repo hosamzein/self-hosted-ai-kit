@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Avoid: -bash: ! ... event not found  (Bash history expansion) [web:276]
+set +H
+
+# -----------------------------
+# 0) System update + cleanup
+# -----------------------------
+sudo apt-get update
+sudo apt-get full-upgrade -y
+sudo apt-get autoremove -y
+sudo apt-get clean
+sudo apt-get autoclean
+
+# -----------------------------
+# 1) Install prerequisites
+# -----------------------------
+sudo apt-get install -y ca-certificates curl git
+
+# -----------------------------
+# 2) Add Docker APT repo + key
+# -----------------------------
+# Remove any old/broken Docker repo files (common cause of apt errors)
+sudo rm -f /etc/apt/sources.list.d/docker.sources
+sudo rm -f /etc/apt/sources.list.d/docker.list
+
+# Create keyrings dir + download Docker GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker repo using the classic docker.list format (simple and reliable)
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# -----------------------------
+# 3) Install Docker Engine + Compose plugin
+# -----------------------------
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# -----------------------------
+# 4) Install + run Portainer
+# -----------------------------
+sudo docker volume create portainer_data
+sudo docker rm -f portainer >/dev/null 2>&1 || true
+
+sudo docker run -d \
+  --name portainer \
+  --restart=always \
+  -p 8000:8000 \
+  -p 9443:9443 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  portainer/portainer-ce:lts
+
+# -----------------------------
+# 5) Clone + run self-hosted-ai-kit (GPU profile)
+# -----------------------------
+if [ ! -d "self-hosted-ai-kit" ]; then
+  git clone https://github.com/hosamzein/self-hosted-ai-kit.git
+fi
+
+cd self-hosted-ai-kit
+cp -n .env.example .env
+
+sudo docker compose --profile gpu-nvidia up -d
+# replace gpu-nvidia with cpu if necessary nad recommended to rely on ollama install version not container to get use of your gpu with direct access
+# -----------------------------
+# 6) Final message (Portainer link)
+# -----------------------------
+SERVER_IP="$(hostname -I | awk '{print $1}')"
+printf "\nInstallation complete.\nPortainer UI: https://%s:9443\n\n" "$SERVER_IP"
