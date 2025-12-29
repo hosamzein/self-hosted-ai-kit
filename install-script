@@ -65,10 +65,16 @@ fi
 cd self-hosted-ai-kit
 cp -n .env.example .env
 
-sudo docker compose --profile cpu up -d
-# replace gpu-nvidia with cpu if necessary nad recommended to rely on ollama install version not container to get use of your gpu with direct access
+sudo docker compose --profile gpu-nvidia up -d
+
 # -----------------------------
-# 6) Final message (Portainer link)
+# 6) Restart Portainer (Security timeout fix) [web:219]
+# -----------------------------
+echo "Restarting Portainer to reset security timer..."
+sudo docker restart portainer
+
+# -----------------------------
+# 7) Final message (Portainer link)
 # -----------------------------
 SERVER_IP="$(hostname -I | awk '{print $1}')"
 printf "\nInstallation complete.\nPortainer UI: https://%s:9443\n\n" "$SERVER_IP"
