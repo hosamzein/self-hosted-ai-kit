@@ -1,6 +1,7 @@
 volumes:
   n8n_storage:
   postgres_storage:
+  pgvector_storage:     # Dedicated storage for vector database
   ollama_storage:
   qdrant_storage:
   openwebui_storage:
@@ -47,27 +48,41 @@ x-init-ollama: &init-ollama
   entrypoint: /bin/sh
   environment:
     - OLLAMA_HOST=ollama:11434
-  command:
-    - "-c"
-    - "sleep 3; ollama pull llama3.2"
 
 services:
-  postgres:
+  # Vector Database - LATEST PostgreSQL 17 + pgvector built-in
+  pgvector:
+    image: pgvector/pgvector:pg17  # PostgreSQL 17 + latest pgvector
+    hostname: pgvector
+    container_name: pgvector
+    networks: ['network']
+    restart: unless-stopped
+    ports:
+      - 5433:5432  # Port 5433 (outside) -> 5432 (inside)
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=vector_db
+    volumes:
+      - pgvector_storage:/var/lib/postgresql/data
+    # After first run: docker exec -it pgvector psql -U ${POSTGRES_USER} -d vector_db -c "CREATE EXTENSION vector;"
+
+  postgres:  # Regular database for n8n
     image: postgres:16-alpine
     hostname: postgres
     networks: ['network']
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=admin1
-      - POSTGRES_PASSWORD=Admin1@postgres
-      - POSTGRES_DB=n8n
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     volumes:
       - postgres_storage:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 10
+    # healthcheck: REMOVED - no longer waits for healthy status
+    # test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+    # interval: 5s
+    # timeout: 5s
+    # retries: 10
 
   n8n-import:
     <<: *service-n8n
@@ -79,9 +94,9 @@ services:
       - "n8n import:credentials --separate --input=/demo-data/credentials && n8n import:workflow --separate --input=/demo-data/workflows"
     volumes:
       - ./n8n/demo-data:/demo-data
-    depends_on:
-      postgres:
-        condition: service_healthy
+    # depends_on: REMOVED healthcheck condition
+    # postgres:
+    #   condition: service_healthy
 
   n8n:
     <<: *service-n8n
@@ -94,11 +109,11 @@ services:
       - n8n_storage:/home/node/.n8n
       - ./n8n/demo-data:/demo-data
       - ./shared:/data/shared
-    depends_on:
-      postgres:
-        condition: service_healthy
-      n8n-import:
-        condition: service_completed_successfully
+    # depends_on: REMOVED healthcheck conditions
+    # postgres:
+    #   condition: service_healthy
+    # n8n-import:
+    #   condition: service_completed_successfully
 
   qdrant:
     image: qdrant/qdrant
